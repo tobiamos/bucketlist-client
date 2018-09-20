@@ -1,0 +1,56 @@
+<app-header></app-header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <div class="card bg-secondary shadow border-0">
+          <div  class="card-header bg-white pb-5">
+              <h4 class="title text-center">Things to do at home</h4>
+              <a routerLink="/bucketlist" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Back</a>
+              <button *ngIf="!showForm" (click)="handleShowForm()" class=" pull-right btn btn-primary"><i class="fa fa-plus"></i>Add</button>
+              <br>
+              <br>
+              <div [@simpleFadeAnimation]="'in'" *ngIf="showForm" class="form-group">
+                <input type="text" name="item" id="item" class="form-control">
+                <br>
+                <button class="btn btn-info"><i class="fa fa-save"></i>save</button>
+                <button (click)="hideForm()" class="btn btn-danger"><i class="fa fa-times"></i>cancel</button>
+              </div>
+            </div>
+            <div (mouseenter)="handleShowElements()" (mouseleave)="hideElements()" class="card-body px-lg-5 py-lg-5">
+              <input placeholder="filter items" type="search" name="filter" id="filter" class="form-control">
+              <br>
+              <ul class="list-group">
+                <li class="list-group-item">Bathe
+                  <br>
+                  <small class="text-primary">created on  12th May 2019</small>
+                  <br>
+                  <small class="text-info">updated on 4th June 2019</small>
+                  <p [@simpleFadeAnimation]="'in'" *ngIf="showElements" class="pull-right"><button (click)="handleShowEditForm()" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i>Edit</button></p>
+                  <span></span>
+                  <p [@simpleFadeAnimation]="'in'" *ngIf="showElements" class="pull-right"><button (click)="handleDelete()" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>Delete</button></p>
+                </li>
+              </ul>
+              <br>
+              <div [@simpleFadeAnimation]="'in'" *ngIf="showEditForm">
+                  <div  class="form-group">
+                      <input value="bathe" type="text" name="name" id="name" class="form-control">
+                    </div>
+                  <div class="form-group">
+                    <label class="label-container" for="completed">Completed
+                      <input type="checkbox" name="completed" id="completed">
+                      <span class="checkmark"></span>
+                    </label>
+                    <!-- <span>unchecked</span> -->
+                  </div>
+                  <div class="form-group">
+                    <button class="btn btn-info"> <i class="fa fa-save"></i> update</button>
+                    <p class="pull-right"><button (click)="hideEditForm()" class=" btn btn-danger"><i class="fa fa-times"></i>cancel</button></p>
+                  </div>
+              </div>
+            </div>
+      </div>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>

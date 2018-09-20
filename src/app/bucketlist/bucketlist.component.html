@@ -1,0 +1,45 @@
+<app-header></app-header>
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <button *ngIf="!showForm" (click)="handleShowForm()" class="btn btn-primary"> new list</button>
+      <div *ngIf="!showForm" class="card bg-secondary shadow border-0">
+        <div class="card-header bg-white pb-5">
+          <h4 class="title text-center">Bucket List <i class="fa fa-trash"></i></h4>
+        </div>
+        <div [@simpleFadeAnimation]="'in'" class="card-body px-lg-5 py-lg-5">
+          <input placeholder="filter bucket lists" type="search" name="filter" id="filter" class="form-control">
+          <br>
+          <ul *ngFor="let list of bucketList" class="list-group">
+            <a routerLink="/bucketlist/{{list.id}}">
+                <li class="list-group-item">{{ list.name}}
+                    <span class="badge badge-primary pull-right">{{ list?.items?.length || 0 }}</span>
+                  </li>
+            </a>
+            
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="showForm" class="card bg-secondary shadow border-0">
+        <div class="card-header bg-white pb-5">
+          <h5 class="title text-center">Create new bucket list</h5>
+        </div>
+        <div [@simpleFadeAnimation]="'in'" class="card-body">
+          <form (submit)="onSubmit()" novalidate [formGroup]="bucketListForm">
+              <div class="form-group">
+                  <label for="listname"> <i class="fa fa-trash"></i> Bucket List Name</label>
+                  <input formControlName="name" type="text" name="listname" id="listname" class="form-control">
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
+                  <p class="pull-right"><button (click)="handleHideForm()" class="btn btn-danger"> <i class="fa fa-times"></i> Cancel</button></p>
+                </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>

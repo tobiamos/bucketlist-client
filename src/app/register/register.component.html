@@ -1,0 +1,60 @@
+<app-header></app-header>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="card bg-secondary shadow border-0">
+        <div class="card-header bg-white pb-5">
+          <h3 class="title text-center">Create Account <i class="fa fa-plus"></i> </h3>
+        </div>
+        <div class="card-body px-lg-5 py-lg-5">
+          <form (submit)="onSubmit()" [formGroup]="registerForm">
+              <div  class="form-group">
+                  <label for="name"> <i class="fa fa-user-o"></i> Name</label>
+                  <input  formControlName="name" type="text" name="name" id="name" class="form-control">
+                  <ul class="help-block">
+                    <li *ngIf="name.errors?.required && name.dirty" class="form-text text-muted">Name is required</li>
+                    <li *ngIf="name.errors?.minlength && name.dirty" class="form-text text-muted">Name must be at least 3 characters</li>
+                    <li  *ngIf="name.errors?.maxlength && name.dirty" class="form-text text-muted">Name must not be more than 12 characters</li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label for="email"> <i class="fa fa-envelope"></i> Email</label>
+                  <input formControlName="email" type="email" name="email" id="email" class="form-control">
+                  <ul class="help-block">
+                    <li *ngIf="email.errors?.required &&  email.dirty" class="form-text text-muted">Email is required</li>
+                    <li *ngIf="email.errors?.validateEmail && email.dirty" class=" form-text text-muted">Email must be a valid email</li>
+                    <li *ngIf="email.errors?.maxlength && email.dirty" class="form-text text-muted">Email must not be more than 50 characters</li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label for="password"> <i class="fa fa-lock"></i> Password</label>
+                  <input formControlName="password" type="password" name="password" id="password" class="form-control">
+                  <ul class="help-block">
+                    <li *ngIf="password.errors?.required && password.dirty" class="form-text text-muted">Password is required</li>
+                    <li *ngIf="password.errors?.minlength && password.dirty" class="form-text text-muted">Password must be at least 6 characters</li>
+                    <li *ngIf="password.errors?.maxlength && password.dirty" class="form-text text-muted">Password must not be more than 32 characters</li>
+                    <li class="form-text text-muted"></li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label for="confirm"><i class="fa fa-lock"></i> Confirm</label>
+                  <input formControlName="confirm" type="password" name="confirm" id="confirm" class="form-control">
+                  <ul class="help-block">
+                    <li *ngIf="confirm.errors?.required && confirm.dirty" class="form-text text-muted">This field is required</li>
+                    <li *ngIf="registerForm.errors?.matchingPasswords && confirm.dirty" class="form-text text-muted">Passwords do not match</li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <button *ngIf="!loading" [disabled]="!registerForm.valid" type="submit" class="btn btn-primary">Create</button>
+                  <div *ngIf="loading" class="lds-ripple"><div></div><div></div></div>
+                  <p class="pull-right">Already have an account? <a  routerLink="/login">Sign in</a></p>
+                </div>
+                
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+</div>
