@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -11,9 +12,10 @@ import { BucketlistComponent } from './bucketlist/bucketlist.component';
 import { BucketlistDetailComponent } from './bucketlist-detail/bucketlist-detail.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
-import { HeaderComponent } from './shared/header/header.component';
-import { FooterComponent } from './shared/footer/footer.component';
 import { AuthService } from './services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthGuard } from './guards/auth.guard';
+import { NotAuthGuard } from './guards/not-auth.guard';
 
 @NgModule({
   declarations: [
@@ -23,8 +25,8 @@ import { AuthService } from './services/auth.service';
     RegisterComponent,
     BucketlistComponent,
     BucketlistDetailComponent,
-    HeaderComponent,
-    FooterComponent
+    // HeaderComponent,
+    // FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -32,9 +34,15 @@ import { AuthService } from './services/auth.service';
     SharedModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, AuthGuard, NotAuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
