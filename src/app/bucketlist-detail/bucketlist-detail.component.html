@@ -5,48 +5,56 @@
     <div class="col-md-8">
       <div class="card bg-secondary shadow border-0">
           <div  class="card-header bg-white pb-5">
-              <h4 class="title text-center">Things to do at home</h4>
+              <!-- <h4 class="title text-center"></h4> -->
               <a routerLink="/bucketlist" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Back</a>
               <button *ngIf="!showForm" (click)="handleShowForm()" class=" pull-right btn btn-primary"><i class="fa fa-plus"></i>Add</button>
               <br>
               <br>
-              <div [@simpleFadeAnimation]="'in'" *ngIf="showForm" class="form-group">
-                <input type="text" name="item" id="item" class="form-control">
-                <br>
-                <button class="btn btn-info"><i class="fa fa-save"></i>save</button>
-                <button (click)="hideForm()" class="btn btn-danger"><i class="fa fa-times"></i>cancel</button>
-              </div>
+              <form (submit)="onSubmit()" novalidate [formGroup]="itemForm">
+                  <div [@simpleFadeAnimation]="'in'" *ngIf="showForm" class="form-group">
+                      <input formControlName="name" type="text" name="item" id="item" class="form-control">
+                      <br>
+                      <button type="submit" [disabled]="!itemForm.valid" class="btn btn-info"><i class="fa fa-save"></i>save</button>
+                      <button (click)="hideForm()" class="btn btn-danger"><i class="fa fa-times"></i>cancel</button>
+                    </div>
+              </form>
             </div>
-            <div (mouseenter)="handleShowElements()" (mouseleave)="hideElements()" class="card-body px-lg-5 py-lg-5">
-              <input placeholder="filter items" type="search" name="filter" id="filter" class="form-control">
+            <div  class="card-body px-lg-5 py-lg-5">
+              <!-- <input placeholder="filter items" type="search" name="filter" id="filter" class="form-control"> -->
               <br>
-              <ul class="list-group">
-                <li class="list-group-item">Bathe
-                  <br>
-                  <small class="text-primary">created on  12th May 2019</small>
-                  <br>
-                  <small class="text-info">updated on 4th June 2019</small>
-                  <p [@simpleFadeAnimation]="'in'" *ngIf="showElements" class="pull-right"><button (click)="handleShowEditForm()" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i>Edit</button></p>
-                  <span></span>
-                  <p [@simpleFadeAnimation]="'in'" *ngIf="showElements" class="pull-right"><button (click)="handleDelete()" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>Delete</button></p>
-                </li>
-              </ul>
+              <div *ngIf="!showEditForm">
+                <ul *ngFor="let item of items" class="list-group">
+                  <li  class="list-group-item">
+                    <h5 [ngClass]="{'completed': item.done }" > {{item.name}}</h5>
+                    <br>
+                    <small class="text-primary"> Created on {{ item.createdAt | date}}</small>
+                    <br>
+                    <small class="text-info"> Last updated on {{ item.updatedAt | date }}</small>
+                    <p [@simpleFadeAnimation]="'in'" class="pull-right"><button (click)="handleShowEditForm(item)" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i>Edit</button></p>
+                    <span></span>
+                    <p [@simpleFadeAnimation]="'in'" class="pull-right"><button (click)="handleDelete(item._id)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>Delete</button></p>
+                  </li>
+                </ul>
+              </div>
+             
+              <p *ngIf="!items.length" class="text-center alert alert-info">There are no items in this bucket list</p>
               <br>
               <div [@simpleFadeAnimation]="'in'" *ngIf="showEditForm">
-                  <div  class="form-group">
-                      <input value="bathe" type="text" name="name" id="name" class="form-control">
+                <form (submit)="editSubmit()" novalidate >
+                    <div  class="form-group">
+                        <input [(ngModel)]= "itemToEdit.name" type="text" name="name" id="name" class="form-control">
+                      </div>
+                    <div class="form-group">
+                      <label class="label-container" for="completed">Completed
+                        <input  [(ngModel)]= "itemToEdit.done" type="checkbox" name="completed" id="completed">
+                        <span class="checkmark"></span>
+                      </label>
                     </div>
-                  <div class="form-group">
-                    <label class="label-container" for="completed">Completed
-                      <input type="checkbox" name="completed" id="completed">
-                      <span class="checkmark"></span>
-                    </label>
-                    <!-- <span>unchecked</span> -->
-                  </div>
-                  <div class="form-group">
-                    <button class="btn btn-info"> <i class="fa fa-save"></i> update</button>
-                    <p class="pull-right"><button (click)="hideEditForm()" class=" btn btn-danger"><i class="fa fa-times"></i>cancel</button></p>
-                  </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-info"> <i class="fa fa-save"></i> update</button>
+                      <p class="pull-right"><button (click)="hideEditForm()" class=" btn btn-danger"><i class="fa fa-times"></i>cancel</button></p>
+                    </div>
+                </form>
               </div>
             </div>
       </div>

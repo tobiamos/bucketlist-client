@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -10,9 +11,11 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
  registerForm: FormGroup;
  loading = false;
+ errorMessage;
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private auth: AuthService
     ) {
     this.createForm();
    }
@@ -36,6 +39,16 @@ export class RegisterComponent implements OnInit {
     const data = this.registerForm.value;
     console.log(data);
     this.loading = true;
+    this.auth.register(data).subscribe(response => {
+      this.loading = false,
+        console.log(response);
+        const token = response['data']['token'];
+        this.auth.storeUserData(token);
+        this.router.navigate(['/bucketlist']);
+    }, error => {
+      this.loading = false;
+      this.errorMessage = error.error['message'] || 'Signup Error';
+    });
     setTimeout(() => {
       this.router.navigate(['/bucketlist']);
     }, 3000);

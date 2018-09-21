@@ -1,4 +1,5 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   trigger,
   state,
@@ -7,6 +8,8 @@ import {
   transition,
   // ...
 } from '@angular/animations';
+import { AuthService } from '../services/auth.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-bucketlist-detail',
@@ -31,17 +34,34 @@ import {
     ])
   ]
 })
-export class BucketlistDetailComponent implements OnInit {
+export class BucketlistDetailComponent implements OnInit, AfterViewInit {
   showForm = false;
   showEditForm = false;
   showElements = false;
+  itemForm: FormGroup;
+  editForm: FormGroup;
+  items: any[];
+  itemToEdit;
 
-  constructor() { }
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private activeRoute: ActivatedRoute,
+    private fb: FormBuilder,
+  ) {
+    this.createForm();
+    this.createForm2();
+   }
 
   ngOnInit() {
+    this.items = [];
+    // this.getBucketLists();
   }
-  handleDelete() {
-    window.confirm('Do you want to delete?');
+  handleDelete(itemId) {
+    const res = window.confirm('Do you want to delete?');
+    if (res) {
+      this.deleteItem(this.getIdFromUrl(), itemId);
+    }
   }
   handleShowForm() {
     return this.showForm = true;
@@ -49,7 +69,8 @@ export class BucketlistDetailComponent implements OnInit {
   hideForm() {
     return this.showForm = false;
   }
-  handleShowEditForm() {
+  handleShowEditForm(item) {
+    this.itemToEdit = item;
     return this.showEditForm = true;
   }
   hideEditForm() {
@@ -61,5 +82,69 @@ export class BucketlistDetailComponent implements OnInit {
   hideElements () {
     return this.showElements = false;
   }
+  getIdFromUrl() {
+    return this.activeRoute.snapshot.params['id'];
+  }
+  ngAfterViewInit() {
+    this.getBucketLists();
+  }
+  createForm() {
+    this.itemForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(1)]],
+    });
+  }
+  createForm2() {
+    this.editForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(1)]],
+      done: ['', [Validators.required]]
+    });
+  }
+
+  getBucketLists() {
+    this.auth.getItems(this.getIdFromUrl()).subscribe(
+      response => {
+        this.items = response['data']['items'];
+      },
+      error => {
+        console.error(error);
+      }
+      );
+  }
+  onSubmit() {
+    const data = this.itemForm.value;
+    data['done'] = false;
+    this.itemForm.reset();
+    this.auth.createItem(data, this.getIdFromUrl()).subscribe(
+      res => {
+        this.getBucketLists();
+      },
+      error => {
+        console.error(error);
+      }
+      );
+  }
+  editSubmit() {
+    console.log(this.itemToEdit);
+    const data = { name: this.itemToEdit['name'], done: this.itemToEdit['done']};
+    this.auth.updateItem(this.getIdFromUrl(), this.itemToEdit['_id'], data)
+    .subscribe(res => {
+      this.itemToEdit = null;
+      this.hideEditForm();
+      this.getBucketLists();
+      // console.log(res);
+    }, error => {
+      console.error(error);
+    });
+   }
+
+  deleteItem(id, itemId) {
+    this.auth.deleteItem(id, itemId).subscribe(res => {
+      this.getBucketLists();
+    }, error => {
+      console.error(error);
+    });
+  }
+  get name () { return this.editForm.get('name'); }
+  get done () { return this.editForm.get('done'); }
 
 }

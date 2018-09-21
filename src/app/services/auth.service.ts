@@ -22,6 +22,14 @@ export class AuthService {
     localStorage.setItem('token', token);
     this.authToken = token;
   }
+  getOptions() {
+    return  {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `${this.loadToken()}`
+      })
+    };
+  }
   userLogout() {
     this.authToken = null;
     localStorage.clear();
@@ -31,5 +39,26 @@ export class AuthService {
   }
   login(data) {
     return this.http.post(`${BASEURL}/auth/login`, data);
+  }
+  register(data) {
+    return this.http.post(`${BASEURL}/auth/register`, data);
+  }
+  getBucketLists() {
+    return this.http.get(`${BASEURL}/bucketlists`, this.getOptions());
+  }
+  createBucketList(data) {
+    return this.http.post(`${BASEURL}/bucketlists`, data, this.getOptions());
+  }
+  getItems(id) {
+    return this.http.get(`${BASEURL}/bucketlists/${id}/items`, this.getOptions());
+  }
+  createItem(data, id) {
+    return this.http.post(`${BASEURL}/bucketlists/${id}/items`, data, this.getOptions());
+  }
+  deleteItem(id, itemId) {
+    return this.http.delete(`${BASEURL}/bucketlists/${id}/items/${itemId}`, this.getOptions());
+  }
+  updateItem(id, itemId, data) {
+    return this.http.put(`${BASEURL}/bucketlists/${id}/items/${itemId}`, data, this.getOptions());
   }
 }

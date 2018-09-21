@@ -13,13 +13,17 @@
           <input placeholder="filter bucket lists" type="search" name="filter" id="filter" class="form-control">
           <br>
           <ul *ngFor="let list of bucketList" class="list-group">
-            <a routerLink="/bucketlist/{{list.id}}">
+            <a routerLink="/bucketlist/{{list._id}}">
                 <li class="list-group-item">{{ list.name}}
                     <span class="badge badge-primary pull-right">{{ list?.items?.length || 0 }}</span>
                   </li>
             </a>
             
           </ul>
+          <br>
+          <div class="text-center">
+            <button [disabled]="page >= pages && count >= bucketList.length" class="btn btn-primary text-center">Load More</button>
+          </div>
         </div>
       </div>
       <div *ngIf="showForm" class="card bg-secondary shadow border-0">
@@ -33,7 +37,7 @@
                   <input formControlName="name" type="text" name="listname" id="listname" class="form-control">
                 </div>
                 <div class="form-group">
-                  <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
+                  <button [disabled]="!bucketListForm.valid" type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
                   <p class="pull-right"><button (click)="handleHideForm()" class="btn btn-danger"> <i class="fa fa-times"></i> Cancel</button></p>
                 </div>
           </form>

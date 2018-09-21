@@ -67,3 +67,7 @@
   .border {
     border-style: dashed;
   }
+
+  .completed {
+    text-decoration: line-through;
+  }

@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, AfterViewInit } from '@angular/core';
 import {
   trigger,
   state,
@@ -34,27 +34,13 @@ import { AuthService } from '../services/auth.service';
     ])
   ]
 })
-export class BucketlistComponent implements OnInit {
+export class BucketlistComponent implements OnInit, AfterViewInit {
   showForm = false;
   bucketListForm: FormGroup;
-   bucketList = [
-    {
-      id: 1,
-      name: 'BucketList1',
-      items: [
-      {
-      id: 1,
-      name: 'need to do X',
-      date_created: '2015 - 08 - 12 11: 57: 23',
-      date_modified: '2015 - 08 - 12 11: 57: 23',
-      done: false,
-      },
-      ],
-      date_created:  '2015-08-12; 11; : 57; : 23 ',
-      date_modified: '2015 - 08 - 12; 11; : 57; : 23',
-      created_by: '1113456'
-      },
-  ];
+  bucketList: any[];
+  page;
+  pages;
+  count;
 
   constructor(
     private fb: FormBuilder,
@@ -65,6 +51,9 @@ export class BucketlistComponent implements OnInit {
 
   ngOnInit() {
   }
+  ngAfterViewInit() {
+    this.getBucketLists();
+  }
   handleShowForm() {
     return this.showForm = true;
   }
@@ -73,14 +62,36 @@ export class BucketlistComponent implements OnInit {
   }
   createForm() {
     this.bucketListForm = this.fb.group({
-      name: [ '', [Validators.required]]
+      name: [ '', [Validators.required, Validators.minLength(1)]]
     });
   }
   onSubmit() {
     const data = this.bucketListForm.value;
-    this.bucketList.push(data);
-    this.bucketListForm.reset();
-    this.handleHideForm();
-
+    this.auth.createBucketList(data).subscribe(
+      response => {
+        const bucket = response['data']['bucket'];
+        this.bucketList.push(bucket);
+        this.bucketListForm.reset();
+        this.count++;
+        this.handleHideForm();
+      },
+      error => {
+        console.error(error);
+      });
   }
+  getBucketLists() {
+    this.auth.getBucketLists().subscribe(
+      response => {
+        this.bucketList = response['data']['bucketLists'];
+        this.page = response['data']['page'];
+        this.pages = response['data']['pages'];
+        this.count = response['data']['count'];
+        this.bucketList.sort((a, b) => a['items'].length > b['items'].lenth ? -1 : 1);
+      },
+      error => {
+        console.error(error);
+      }
+      );
+
+}
 }

@@ -6,6 +6,7 @@
       <div class="card bg-secondary shadow border-0">
         <div class="card-header bg-white pb-5">
           <h3 class="title text-center">Create Account <i class="fa fa-plus"></i> </h3>
+          <p *ngIf="errorMessage" class="alert alert-danger">{{errorMessage}}</p>
         </div>
         <div class="card-body px-lg-5 py-lg-5">
           <form (submit)="onSubmit()" [formGroup]="registerForm">
