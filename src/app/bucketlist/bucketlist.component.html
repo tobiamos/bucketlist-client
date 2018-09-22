@@ -10,19 +10,33 @@
           <h4 class="title text-center">Bucket List <i class="fa fa-trash"></i></h4>
         </div>
         <div [@simpleFadeAnimation]="'in'" class="card-body px-lg-5 py-lg-5">
-          <input placeholder="filter bucket lists" type="search" name="filter" id="filter" class="form-control">
+          <input *ngIf="!showEditForm" (input)="search($event)" [(ngModel)]="query" placeholder="filter bucket lists" type="search" name="filter" id="filter" class="form-control">
           <br>
-          <ul *ngFor="let list of bucketList" class="list-group">
-            <a routerLink="/bucketlist/{{list._id}}">
-                <li class="list-group-item">{{ list.name}}
-                    <span class="badge badge-primary pull-right">{{ list?.items?.length || 0 }}</span>
-                  </li>
-            </a>
-            
-          </ul>
+          <form *ngIf="showEditForm" novalidate (submit) = "editSubmit()">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input name="name"  [(ngModel)]= "itemToEdit.name"  type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
+              <button (click)="hideEditForm()" class=" pull-right btn btn-danger"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+          </form>
+          <p *ngIf="errorMessage && !infoMessage" class="alert alert-danger">{{errorMessage}}</p>
+          <p *ngIf="infoMessage && !errorMessage" class="alert alert-info">{{infoMessage}}</p>
+          <div *ngIf="!showEditForm">
+              <ul *ngFor="let list of bucketList" class="list-group">
+                  <li class="list-group-item">{{ list.name}}
+                    <button (click)="delete(list._id)" class=" space pull-right btn-xs btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                    <button (click)="handleShowEditForm(list)" class=" space pull-right btn-xs btn btn-sm btn-info"><i class="fa fa-edit"></i></button>
+                    <a routerLink="/bucketlist/{{list._id}}" class=" space pull-right btn-xs btn btn-sm btn-success"><i class="fa fa-eye"></i></a>
+                      <span class="badge badge-primary pull-right">{{ list?.items?.length || 0 }}</span>
+                    </li>
+            </ul>
+          </div>
           <br>
           <div class="text-center">
-            <button [disabled]="page >= pages && count >= bucketList.length" class="btn btn-primary text-center">Load More</button>
+            <button *ngIf="!showEditForm" [disabled]="page >= pages && count >= bucketList.length" class="btn btn-primary text-center">Load More</button>
           </div>
         </div>
       </div>

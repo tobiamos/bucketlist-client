@@ -49,6 +49,13 @@ export class AuthService {
   createBucketList(data) {
     return this.http.post(`${BASEURL}/bucketlists`, data, this.getOptions());
   }
+  deleteList(id) {
+    return this.http.delete(`${BASEURL}/bucketlists/${id}`, this.getOptions());
+  }
+  updateList(id, data) {
+    return this.http.put(`${BASEURL}/bucketlists/${id}`, data, this.getOptions());
+
+  }
   getItems(id) {
     return this.http.get(`${BASEURL}/bucketlists/${id}/items`, this.getOptions());
   }
@@ -60,5 +67,8 @@ export class AuthService {
   }
   updateItem(id, itemId, data) {
     return this.http.put(`${BASEURL}/bucketlists/${id}/items/${itemId}`, data, this.getOptions());
+  }
+  search(query) {
+    return this.http.get(`${BASEURL}/bucketlists?q=${query}`, this.getOptions());
   }
 }

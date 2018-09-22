@@ -36,11 +36,17 @@ import { AuthService } from '../services/auth.service';
 })
 export class BucketlistComponent implements OnInit, AfterViewInit {
   showForm = false;
+  showEditForm = false;
+  itemToEdit;
+  query;
   bucketListForm: FormGroup;
   bucketList: any[];
   page;
   pages;
   count;
+  errorMessage;
+  infoMessage;
+  hideMessage;
 
   constructor(
     private fb: FormBuilder,
@@ -60,6 +66,13 @@ export class BucketlistComponent implements OnInit, AfterViewInit {
   handleHideForm() {
     return this.showForm = false;
   }
+  handleShowEditForm(item) {
+    this.itemToEdit = item;
+    return this.showEditForm = true;
+  }
+  hideEditForm() {
+    return this.showEditForm = false;
+  }
   createForm() {
     this.bucketListForm = this.fb.group({
       name: [ '', [Validators.required, Validators.minLength(1)]]
@@ -78,6 +91,51 @@ export class BucketlistComponent implements OnInit, AfterViewInit {
       error => {
         console.error(error);
       });
+  }
+  delete(itemId) {
+    const res = window.confirm('Do you want to delete?');
+    if (res) {
+      this.deleteItem(itemId);
+    }
+  }
+  search() {
+    console.log(this.query);
+    this.auth.search(this.query).subscribe(res => {
+      this.infoMessage = res['message'];
+      this.bucketList = res['data']['bucketLists'];
+      this.errorMessage = null;
+      console.log(res);
+    }, error => {
+      if (error['status'] === 400 ) {
+        console.log(this.query);
+        this.errorMessage = null;
+        return this.getBucketLists();
+      }
+      this.bucketList = [];
+      this.errorMessage = error.error['message'] || 'search error';
+      this.infoMessage = null;
+      console.error(error['status']);
+    });
+  }
+  deleteItem(id) {
+    this.auth.deleteList(id).subscribe(res => {
+      this.getBucketLists();
+    }, error => { console.error(error); });
+  }
+  editSubmit() {
+    const data = { name: this.itemToEdit['name'] };
+    const id = this.itemToEdit['_id'];
+    this.auth.updateList(id, data).subscribe(
+      res => {
+      this.itemToEdit = null;
+      this.hideEditForm();
+      this.getBucketLists();
+
+    },
+       error => {
+         console.error(error);
+       }
+      );
   }
   getBucketLists() {
     this.auth.getBucketLists().subscribe(
