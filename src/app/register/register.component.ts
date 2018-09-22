@@ -37,11 +37,11 @@ export class RegisterComponent implements OnInit {
 
   onSubmit() {
     const data = this.registerForm.value;
-    console.log(data);
+    // console.log(data);
     this.loading = true;
     this.auth.register(data).subscribe(response => {
-      this.loading = false,
-        console.log(response);
+      this.loading = false;
+        // console.log(response);
         const token = response['data']['token'];
         this.auth.storeUserData(token);
         this.router.navigate(['/bucketlist']);
